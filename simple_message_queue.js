@@ -11,8 +11,8 @@ SimpleMessageQueue = (function () {
 		 * @param {Function} A callback to execute when an event of the right type is published.
 		 */
 		subscribe: function (types, callback) {
-			for (type in types) {
-				eventsMasterList[type] = callback() //.concat( [callback()] );
+			for (i in types) {
+				eventsMasterList[types[i]] = callback //.concat( [callback] );
 			}
 		},
 
@@ -27,10 +27,11 @@ SimpleMessageQueue = (function () {
 			if (data == null) {
 				throw "Publication has no content"
 			}
+			console.log("Publication has content")
 			for (event in Object.keys(eventsMasterList)) {
-				if (event == type) {
+				if (Object.keys(eventsMasterList)[event] == type) {
 					//for (callback in eventsMasterList[type]) {
-						callback(data)
+						eventsMasterList[type](data)
 					//}
 				}
 			}
