@@ -2,7 +2,7 @@
 // Use the code in this file as a blueprint, and modify / add to it as needed.
 
 SimpleMessageQueue = (function () {
-	var eventsMasterList = {}
+	var subscriptions = {} //Key: Event Types, Value: Callbacks for Event Subscribers 
 	var proto = {
 		/**
 		 * Subscribe to a list of event "types" with the specified callback.
@@ -12,7 +12,10 @@ SimpleMessageQueue = (function () {
 		 */
 		subscribe: function (types, callback) {
 			for (i in types) {
-				eventsMasterList[types[i]] = callback //.concat( [callback] );
+				if(subscriptions[types[i]] == null) {
+					subscriptions[types[i]] = []
+				}
+				subscriptions[types[i]] = subscriptions[types[i]].concat( callback );
 			}
 		},
 
@@ -27,12 +30,11 @@ SimpleMessageQueue = (function () {
 			if (data == null) {
 				throw "Publication has no content"
 			}
-			console.log("Publication has content")
-			for (event in Object.keys(eventsMasterList)) {
-				if (Object.keys(eventsMasterList)[event] == type) {
-					//for (callback in eventsMasterList[type]) {
-						eventsMasterList[type](data)
-					//}
+			for (event in Object.keys(subscriptions)) {
+				if (Object.keys(subscriptions)[event] == type) {
+					for (callback in subscriptions[type]) {
+						subscriptions[type][callback](data)
+					}
 				}
 			}
 		},
@@ -43,8 +45,8 @@ SimpleMessageQueue = (function () {
 		// Use this function to instantiate instances of SimpleMessageQueue. See tests.js for the
 		// specification of how the instances should behave.
 		create: function () {
-			var ret = Object.create(proto);
-			ret.subscrptions = {};
+			var ret = Object.create(proto)
+			ret.subscriptions = {}
 			return ret;
 		},
 	};
