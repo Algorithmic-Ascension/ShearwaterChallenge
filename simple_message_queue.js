@@ -33,7 +33,12 @@ SimpleMessageQueue = (function () {
 			for (event in Object.keys(subscriptions)) {
 				if (Object.keys(subscriptions)[event] == type) {
 					for (callback in subscriptions[type]) {
-						subscriptions[type][callback](data)
+						try {
+							subscriptions[type][callback](data)
+						}
+						catch(err) {
+							
+						}
 					}
 				}
 			}
