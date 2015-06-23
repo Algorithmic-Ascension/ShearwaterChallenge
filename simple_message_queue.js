@@ -1,6 +1,3 @@
-// Your first task is to implement a simple publish / subscribe (or "pub/sub") system.
-// Use the code in this file as a blueprint, and modify / add to it as needed.
-
 SimpleMessageQueue = (function () {
 	var subscriptions = {} //Key: Event Types, Value: Callbacks for Event Subscribers 
 	var proto = {
@@ -11,12 +8,12 @@ SimpleMessageQueue = (function () {
 		 * @param {Function} A callback to execute when an event of the right type is published.
 		 */
 		subscribe: function (types, callback) {
-			for (i in types) {
-				if(subscriptions[types[i]] == null) {
-					subscriptions[types[i]] = []
+			types.forEach( function(type) {
+				if(subscriptions[type] == null) {
+					subscriptions[type] = []
 				}
-				subscriptions[types[i]] = subscriptions[types[i]].concat( callback );
-			}
+				subscriptions[type] = subscriptions[type].concat( callback );
+			});
 		},
 
 		/**
@@ -30,18 +27,18 @@ SimpleMessageQueue = (function () {
 			if (data == null) {
 				throw "Publication has no content"
 			}
-			for (event in Object.keys(subscriptions)) {
-				if (Object.keys(subscriptions)[event] == type) {
-					for (callback in subscriptions[type]) {
+			Object.keys(subscriptions).forEach( function(event) {
+				if (event == type) {
+					subscriptions[type].forEach( function (callback) {
 						try {
-							subscriptions[type][callback](data)
+							callback(data)
 						}
 						catch(err) {
-							
+							console.log(err)
 						}
-					}
+					})
 				}
-			}
+			})
 		},
 	};
 
